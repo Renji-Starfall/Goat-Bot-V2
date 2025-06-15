@@ -30,11 +30,8 @@ function formatResponse(content) {
 
     return `
         𝗥𝗲𝗻𝗷𝗶 𝗔𝗜 🤖 \n
-
 ${styledContent}
-
-
-👤 Créateur : Renji Starfall`;
+`;
 }
 
 // Main function to get AI response
