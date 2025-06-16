@@ -1,41 +1,41 @@
-const axios = require("axios");
+const axios = require('axios');
 
 module.exports = {
   config: {
-    name: "blague",
+    name: "blaque",
     version: "1.0",
     author: "Renji Starfall",
     role: 0,
-    shortDescription: "Affiche une blague",
-    longDescription: "Récupère et affiche une blague aléatoire depuis une API publique",
+    shortDescription: "Affiche une blague drôle",
+    longDescription: "Récupère une blague depuis une API et envoie la réponse sans répondre au message initial.",
     category: "fun",
     guide: {
       fr: "{pn}"
     }
   },
 
-  onStart: async function ({ message }) {
+  onStart: async function ({ api, event, message }) {
     const url = "https://blague-api.vercel.app/api?mode=global";
 
     try {
       const res = await axios.get(url);
       const data = res.data;
 
-      const blague = data.blague;
-      const reponse = data.reponse;
+      const blague = data.blague || "Blague introuvable";
+      const reponse = data.reponse || "Réponse indisponible";
 
-      
-      message.reply(`😄 Blague : ${blague}`, async (err, info) => {
-        if (err) return;
-
-        // Attend 3 secondes puis envoie la réponse
+      // Envoie la blague en réponse au message initial
+      api.sendMessage(blague, event.threadID, (err, info) => {
+        if (err) return message.reply("❌ Erreur lors de l'envoi de la blague.");
+        
+        // Après 2 secondes, envoie la réponse sans répondre au message initial
         setTimeout(() => {
-          message.reply(`👉 Réponse : ${reponse}`);
+          api.sendMessage(reponse, event.threadID);
         }, 2000);
-      });
+      }, event.messageID);
     } catch (error) {
       console.error(error);
-      message.reply("❌ Impossible de récupérer une blague pour le moment.");
+      message.reply("❌ Une erreur est survenue lors de la récupération de la blague.");
     }
   }
 };
